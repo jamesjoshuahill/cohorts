@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 
+if ARGV[0].nil?
+  puts "Usage:  random PATH_TO_COHORT_LIST"
+  exit 1
+end
+
 developers = File.readlines(ARGV[0], chomp: true)
 
 puts developers.shuffle.first
