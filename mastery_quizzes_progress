@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+def usage
+  puts "Usage:  mastery_quizzes_progress PATH_TO_CHALLENGE_ATTEMPTS_JSON PATH_TO_COHORT_JSON"
+  exit 1
+end
+
+def read_json(path)
+  raw_data = File.read(path)
+  JSON.parse(raw_data)
+end
+
+def filter_challenge_attempts(attempts, github_usernames)
+  attempts.select do |attempt|
+    challenge = attempt.fetch("challenge")
+    github_username = attempt.fetch("student").fetch("github_username")
+
+    challenge == "mastery-quizzes" && github_usernames.include?(github_username)
+  end
+end
+
+def print_summary(cohort, challenge_attempts)
+  puts "Summary:"
+  puts "#{cohort.length} in cohort"
+  puts "#{challenge_attempts.length} total challenge attempts"
+end
+
+def latest_challenge_numbers(cohort, challenge_attempts)
+  cohort.each_with_object(Hash.new(0)) do |student, progress|
+    name = student.fetch("name")
+    github_username = student.fetch("github_username")
+
+    challenge_attempts.each do |attempt|
+      if attempt.fetch("student").fetch("github_username") == github_username
+        number = attempt.fetch("challenge_number")
+        if progress[name] < number
+          progress[name] = number
+        end
+      end
+    end
+  end
+end
+
+def print_progress(progress)
+  puts "Progress through Mastery Quizzes:"
+  progress.each do |name, number|
+    puts "#{name}\t#{number}"
+  end
+end
+
+usage if ARGV[0].nil? || ARGV[1].nil?
+
+unfiltered_challenge_attempts = read_json(ARGV[0])
+cohort = read_json(ARGV[1])
+
+github_usernames = cohort.map { |c| c.fetch("github_username") }
+
+challenge_attempts = filter_challenge_attempts(unfiltered_challenge_attempts, github_usernames)
+
+print_summary(cohort, challenge_attempts)
+
+progress = latest_challenge_numbers(cohort, challenge_attempts)
+
+puts ""
+print_progress(progress)
