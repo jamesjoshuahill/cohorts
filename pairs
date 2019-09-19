@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+developers = File.readlines(ARGV[0], chomp: true)
+
+unless developers.length.modulo(2).zero?
+  developers.push("Captain Crunch")
+end
+
+developers.shuffle.each_slice(2) do |pair|
+  puts pair.join(", ")
+end

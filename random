@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+developers = File.readlines(ARGV[0], chomp: true)
+
+puts developers.shuffle.first
