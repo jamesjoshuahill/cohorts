@@ -3,7 +3,7 @@
 require 'json'
 
 def usage
-  puts "Usage:  mastery_quizzes_progress PATH_TO_CHALLENGE_ATTEMPTS_JSON PATH_TO_COHORT_JSON"
+  puts "Usage:  mastery_quizzes_progress PATH_TO_COHORT_JSON PATH_TO_CHALLENGE_ATTEMPTS_JSON"
   exit 1
 end
 
@@ -55,8 +55,8 @@ end
 
 usage if ARGV[0].nil? || ARGV[1].nil?
 
-unfiltered_challenge_attempts = read_json(ARGV[0])
-cohort = read_json(ARGV[1])
+cohort = read_json(ARGV[0])
+unfiltered_challenge_attempts = read_json(ARGV[1])
 
 github_usernames = cohort.map { |c| c.fetch("github_username") }
 
