@@ -29,17 +29,18 @@ end
 
 def latest_challenge_numbers(cohort, challenge_attempts)
   cohort.each_with_object(Hash.new(0)) do |student, progress|
-    student_name = student.fetch("name")
-    student_github_username = student.fetch("github_username")
+    name = student.fetch("name")
+    github_username = student.fetch("github_username")
 
-    challenge_attempts.each do |attempt|
+    students_challenge_attempts = challenge_attempts.select do |attempt|
+      github_username == attempt.fetch("student").fetch("github_username")
+    end
+
+    students_challenge_attempts.each do |attempt|
       challenge_number = attempt.fetch("challenge_number")
-      attempt_github_username = attempt.fetch("student").fetch("github_username")
 
-      if attempt_github_username == student_github_username
-        if progress[student_name] < challenge_number
-          progress[student_name] = challenge_number
-        end
+      if progress[name] < challenge_number
+        progress[name] = challenge_number
       end
     end
   end
