@@ -59,18 +59,22 @@ def print_progress(progress)
   end
 end
 
-usage if ARGV[0].nil? || ARGV[1].nil?
+def main
+  usage if ARGV[0].nil? || ARGV[1].nil?
 
-cohort = read_json(ARGV[0])
-unfiltered_challenge_attempts = read_json(ARGV[1])
+  cohort = read_json(ARGV[0])
+  unfiltered_challenge_attempts = read_json(ARGV[1])
 
-github_usernames = cohort.map { |c| c.fetch("github_username") }
+  github_usernames = cohort.map { |c| c.fetch("github_username") }
 
-challenge_attempts = filter_challenge_attempts(unfiltered_challenge_attempts, github_usernames)
+  challenge_attempts = filter_challenge_attempts(unfiltered_challenge_attempts, github_usernames)
 
-print_summary(cohort, challenge_attempts)
+  print_summary(cohort, challenge_attempts)
 
-progress = latest_attempts(cohort, challenge_attempts)
+  progress = latest_attempts(cohort, challenge_attempts)
 
-puts ""
-print_progress(progress)
+  puts ""
+  print_progress(progress)
+end
+
+main
