@@ -27,8 +27,8 @@ def print_summary(cohort, challenge_attempts)
   puts "#{challenge_attempts.length} total challenge attempts"
 end
 
-def latest_challenge_numbers(cohort, challenge_attempts)
-  cohort.each_with_object(Hash.new(0)) do |student, progress|
+def latest_attempts(cohort, challenge_attempts)
+  cohort.each_with_object(Hash.new({challenge_number: 0, marks: 0})) do |student, progress|
     name = student.fetch("name")
     github_username = student.fetch("github_username")
 
@@ -38,9 +38,13 @@ def latest_challenge_numbers(cohort, challenge_attempts)
 
     students_challenge_attempts.each do |attempt|
       challenge_number = attempt.fetch("challenge_number")
+      marks = attempt.fetch("marks")
 
-      if progress[name] < challenge_number
-        progress[name] = challenge_number
+      if progress[name].fetch(:challenge_number) < challenge_number
+        progress[name] = {
+          challenge_number: challenge_number,
+          marks: marks
+        }
       end
     end
   end
@@ -48,8 +52,10 @@ end
 
 def print_progress(progress)
   puts "Progress through Mastery Quizzes:"
-  progress.each do |name, number|
-    puts "#{name}\t#{number}"
+  progress.each do |name, latest_attempt|
+    marks = latest_attempt.fetch(:marks)
+    challenge_status = (marks == 100) ? "complete" : "in progress"
+    puts "#{name}\t#{latest_attempt[:challenge_number]}\t#{challenge_status}"
   end
 end
 
@@ -64,7 +70,7 @@ challenge_attempts = filter_challenge_attempts(unfiltered_challenge_attempts, gi
 
 print_summary(cohort, challenge_attempts)
 
-progress = latest_challenge_numbers(cohort, challenge_attempts)
+progress = latest_attempts(cohort, challenge_attempts)
 
 puts ""
 print_progress(progress)
