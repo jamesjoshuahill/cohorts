@@ -54,8 +54,8 @@ def print_progress(progress)
   puts "Progress through Mastery Quizzes:"
   progress.each do |name, latest_attempt|
     marks = latest_attempt.fetch(:marks)
-    challenge_status = (marks == 100) ? "complete" : "in progress"
-    puts "#{name}\t#{latest_attempt[:challenge_number]}\t#{challenge_status}"
+    formatted_marks = "(#{marks.to_s.rjust(3," ")}/100)"
+    puts "#{name}\t#{latest_attempt[:challenge_number]}\t#{formatted_marks}"
   end
 end
 
