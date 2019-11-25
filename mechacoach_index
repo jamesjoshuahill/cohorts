@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+if ARGV[0].nil? || ARGV[1].nil?
+  puts "Usage:  mechacoach_index PATH_TO_MECHACOACH_PAIRS INDEX"
+  exit 1
+end
+
+def read_json(path)
+  raw_data = File.read(path)
+  JSON.parse(raw_data)
+end
+
+pairs = read_json(ARGV[0])
+
+pairs[ARGV[1].to_i].each do |pair|
+  puts pair.join(", ")
+end
